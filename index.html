@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cue</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&family=Syne:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div id="splash">
+    <svg id="splash-cuey" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="sg" cx="50%" cy="28%" r="72%">
+          <stop offset="0%" stop-color="#FFBB55"/>
+          <stop offset="100%" stop-color="#FF5E82"/>
+        </radialGradient>
+        <filter id="sf-round" x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/>
+          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -6" result="r"/>
+          <feComposite in="SourceGraphic" in2="r" operator="in"/>
+        </filter>
+      </defs>
+      <path d="M100,12 L124.7,66 L183.7,72.8 L139.9,113 L151.7,171.2 L100,142 L48.3,171.2 L60.1,113 L16.3,72.8 L75.3,66 Z" fill="url(#sg)" filter="url(#sf-round)"/>
+      <circle cx="82" cy="98" r="19" fill="white"/>
+      <circle cx="118" cy="98" r="19" fill="white"/>
+      <circle cx="82" cy="101" r="12" fill="#111" class="cuey-pupil"/>
+      <circle cx="118" cy="101" r="12" fill="#111" class="cuey-pupil"/>
+    </svg>
+    <span id="splash-name">Cue</span>
+  </div>
+
+  <svg class="grain-svg" aria-hidden="true">
+    <filter id="grainy">
+      <feTurbulence type="turbulence" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+  </svg>
+  <header>
+    <div class="header-inner">
+      <div class="logo">Cue</div>
+      <nav class="header-nav">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="search prompts…" autocomplete="off" />
+          <button class="btn-add-mobile" id="openAddModalMobile" aria-label="add prompt">+</button>
+        </div>
+        <button class="btn-theme" id="toggleTheme" aria-label="toggle theme">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M20 15.3099L23.31 11.9999L20 8.68994V3.99994H15.31L12 0.689941L8.69 3.99994H4V8.68994L0.690002 11.9999L4 15.3099V19.9999H8.69L12 23.3099L15.31 19.9999H20V15.3099ZM12 17.9999V5.99994C15.31 5.99994 18 8.68994 18 11.9999C18 15.3099 15.31 17.9999 12 17.9999Z" fill="currentColor"/>
+          </svg>
+        </button>
+        <button class="btn-pill" id="openAddModal">+ add prompt</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <div class="filter-inner">
+      <button class="filter-chip active" data-cat="all">all</button>
+      <button class="filter-chip" data-cat="writing">writing</button>
+      <button class="filter-chip" data-cat="coding">coding</button>
+      <button class="filter-chip" data-cat="marketing">marketing</button>
+      <button class="filter-chip" data-cat="research">research</button>
+      <button class="filter-chip" data-cat="design">design</button>
+      <button class="filter-chip" data-cat="productivity">productivity</button>
+      <button class="filter-chip" data-cat="education">education</button>
+      <button class="filter-chip" data-cat="other">other</button>
+    </div>
+  </div>
+
+  <div class="sort-bar">
+    <div class="sort-inner">
+      <span class="results-count" id="resultsCount">0 prompts</span>
+      <div class="sort-controls">
+        <select id="sortSelect">
+          <option value="newest">newest</option>
+          <option value="oldest">oldest</option>
+          <option value="tokens-high">most tokens</option>
+          <option value="tokens-low">fewest tokens</option>
+          <option value="platform">platform</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="grid" id="promptGrid"></div>
+    <div class="empty-state" id="emptyState">
+      <p>no prompts yet — be the first to add one</p>
+      <button class="btn-pill" id="openAddModalEmpty">+ add prompt</button>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="addModal" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h2>add a prompt</h2>
+        <button class="modal-close" id="closeAddModal" aria-label="close">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addForm" novalidate>
+          <div class="form-row">
+            <label for="f-title">title <span class="req">*</span></label>
+            <input type="text" id="f-title" placeholder="short descriptive name" required />
+          </div>
+          <div class="form-row">
+            <label for="f-prompt">prompt <span class="req">*</span></label>
+            <textarea id="f-prompt" rows="6" placeholder="paste your full prompt here…" required></textarea>
+          </div>
+          <div class="form-row-2">
+            <div class="form-row">
+              <label for="f-category">category <span class="req">*</span></label>
+              <select id="f-category" required>
+                <option value="" disabled selected>pick a category</option>
+                <option value="writing">writing</option>
+                <option value="coding">coding</option>
+                <option value="marketing">marketing</option>
+                <option value="research">research</option>
+                <option value="design">design</option>
+                <option value="productivity">productivity</option>
+                <option value="education">education</option>
+                <option value="other">other</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="f-platform">ai platform <span class="req">*</span></label>
+              <select id="f-platform" required>
+                <option value="" disabled selected>pick a platform</option>
+                <option value="Claude">Claude</option>
+                <option value="ChatGPT">ChatGPT</option>
+                <option value="Gemini">Gemini</option>
+                <option value="Grok">Grok</option>
+                <option value="Perplexity">Perplexity</option>
+                <option value="Mistral">Mistral</option>
+                <option value="LLaMA">LLaMA</option>
+                <option value="Copilot">Copilot</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-row">
+              <label for="f-model">model / version</label>
+              <input type="text" id="f-model" placeholder="e.g. GPT-4o, claude-sonnet-4" />
+            </div>
+            <div class="form-row">
+              <label for="f-tokens">token count</label>
+              <input type="number" id="f-tokens" placeholder="e.g. 320" min="0" />
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-row">
+              <label for="f-temperature">temperature</label>
+              <input type="number" id="f-temperature" placeholder="0.0 – 2.0" step="0.1" min="0" max="2" />
+            </div>
+            <div class="form-row">
+              <label for="f-mode">mode / context</label>
+              <input type="text" id="f-mode" placeholder="e.g. system prompt, API, chat" />
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="f-notes">notes</label>
+            <textarea id="f-notes" rows="2" placeholder="what worked, what to watch out for…"></textarea>
+          </div>
+          <div class="form-row">
+            <label for="f-tags">tags <span class="hint">(comma separated)</span></label>
+            <input type="text" id="f-tags" placeholder="e.g. reusable, long-form, json-output" />
+          </div>
+          <div class="form-error" id="formError"></div>
+          <div class="form-actions">
+            <button type="button" class="btn-ghost" id="cancelAdd">cancel</button>
+            <button type="submit" class="btn-pill">save prompt</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="viewModal" hidden>
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <div class="view-title-wrap">
+          <span class="view-cat-badge" id="v-cat"></span>
+          <h2 id="v-title"></h2>
+        </div>
+        <div class="modal-header-actions">
+          <button class="btn-ghost-sm" id="copyPrompt">copy prompt</button>
+          <button class="btn-ghost-sm" id="editPrompt">edit</button>
+          <button class="btn-ghost-sm btn-danger" id="deletePrompt">delete</button>
+          <button class="modal-close" id="closeViewModal" aria-label="close">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="view-meta" id="v-meta"></div>
+        <div class="view-prompt-box" id="v-prompt"></div>
+        <div class="view-section" id="v-notes-section">
+          <label>notes</label>
+          <p id="v-notes"></p>
+        </div>
+        <div class="view-tags" id="v-tags"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cuey-bubble">
+    hey! i'm cuey ✦<br>
+    cue is your personal ai prompt library, save, tag &amp; search your best prompts.
+    <button class="bubble-dismiss" aria-label="dismiss">✕</button>
+  </div>
+
+  <div id="cuey-corner">
+    <svg id="corner-cuey" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="cg" cx="50%" cy="28%" r="72%">
+          <stop id="cg-s" offset="0%" stop-color="#FFBB55"/>
+          <stop id="cg-e" offset="100%" stop-color="#FF5E82"/>
+        </radialGradient>
+        <filter id="cf-round" x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/>
+          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -6" result="r"/>
+          <feComposite in="SourceGraphic" in2="r" operator="in"/>
+        </filter>
+      </defs>
+      <path d="M100,12 L124.7,66 L183.7,72.8 L139.9,113 L151.7,171.2 L100,142 L48.3,171.2 L60.1,113 L16.3,72.8 L75.3,66 Z" fill="url(#cg)" filter="url(#cf-round)"/>
+      <circle cx="82" cy="98" r="19" fill="white"/>
+      <circle cx="118" cy="98" r="19" fill="white"/>
+      <circle cx="82" cy="101" r="12" fill="#111" class="cuey-pupil"/>
+      <circle cx="118" cy="101" r="12" fill="#111" class="cuey-pupil"/>
+    </svg>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
