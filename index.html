@@ -43,6 +43,17 @@
   <header>
     <div class="header-inner">
       <div class="logo">Cue</div>
+      <div class="filter-inner">
+        <button class="filter-chip active" data-cat="all">all</button>
+        <button class="filter-chip" data-cat="writing">writing</button>
+        <button class="filter-chip" data-cat="coding">coding</button>
+        <button class="filter-chip" data-cat="marketing">marketing</button>
+        <button class="filter-chip" data-cat="research">research</button>
+        <button class="filter-chip" data-cat="design">design</button>
+        <button class="filter-chip" data-cat="productivity">productivity</button>
+        <button class="filter-chip" data-cat="education">education</button>
+        <button class="filter-chip" data-cat="other">other</button>
+      </div>
       <nav class="header-nav">
         <div class="search-wrap">
           <input type="text" id="searchInput" placeholder="search prompts…" autocomplete="off" />
@@ -57,20 +68,6 @@
       </nav>
     </div>
   </header>
-
-  <div class="filter-bar">
-    <div class="filter-inner">
-      <button class="filter-chip active" data-cat="all">all</button>
-      <button class="filter-chip" data-cat="writing">writing</button>
-      <button class="filter-chip" data-cat="coding">coding</button>
-      <button class="filter-chip" data-cat="marketing">marketing</button>
-      <button class="filter-chip" data-cat="research">research</button>
-      <button class="filter-chip" data-cat="design">design</button>
-      <button class="filter-chip" data-cat="productivity">productivity</button>
-      <button class="filter-chip" data-cat="education">education</button>
-      <button class="filter-chip" data-cat="other">other</button>
-    </div>
-  </div>
 
   <div class="sort-bar">
     <div class="sort-inner">
@@ -233,6 +230,9 @@
     </svg>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

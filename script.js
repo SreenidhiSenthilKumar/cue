@@ -1,6 +1,5 @@
-const STORAGE_KEY = 'cue_prompts';
-const USER_KEY    = 'cue_user_id';
-const THEME_KEY   = 'cue_theme';
+const USER_KEY  = 'cue_user_id';
+const THEME_KEY = 'cue_theme';
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -27,18 +26,22 @@ function getOrCreateUserId() {
 }
 const currentUserId = getOrCreateUserId();
 
-let prompts       = load();
+const db          = firebase.firestore();
+const promptsCol  = db.collection('prompts');
+
+let prompts         = [];
 let activeCategory  = 'all';
 let activeSortOrder = 'newest';
 let activeSearch    = '';
 let viewingId = null;
 let editingId = null;
 
-function load() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
-}
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(prompts)); }
+promptsCol.onSnapshot(snapshot => {
+  prompts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  render();
+}, err => {
+  console.error('Firestore error:', err);
+});
 
 function slugPlatform(p) { return 'plat-' + p.toLowerCase().replace(/[^a-z]/g, ''); }
 function catClass(cat)    { return 'cat-' + cat; }
@@ -231,7 +234,7 @@ function closeAdd() {
   editingId = null;
 }
 
-document.getElementById('addForm').addEventListener('submit', e => {
+document.getElementById('addForm').addEventListener('submit', async e => {
   e.preventDefault();
   const errEl    = document.getElementById('formError');
   const title    = document.getElementById('f-title').value.trim();
@@ -259,28 +262,31 @@ document.getElementById('addForm').addEventListener('submit', e => {
     tags:        rawTags.split(',').map(t => t.trim()).filter(Boolean),
   };
 
-  if (editingId) {
-    const idx = prompts.findIndex(p => p.id === editingId);
-    if (idx !== -1) prompts[idx] = { ...prompts[idx], ...fields };
-  } else {
-    prompts.unshift({ id: crypto.randomUUID(), ...fields, createdAt: Date.now(), authorId: currentUserId });
+  try {
+    if (editingId) {
+      await promptsCol.doc(editingId).update(fields);
+    } else {
+      await promptsCol.add({ ...fields, createdAt: Date.now(), authorId: currentUserId });
+    }
+    closeAdd();
+  } catch (err) {
+    errEl.textContent = 'could not save — check your connection';
+    console.error(err);
   }
-
-  save();
-  render();
-  closeAdd();
 });
 
 document.getElementById('editPrompt').addEventListener('click', () => {
   if (viewingId) openEdit(viewingId);
 });
 
-document.getElementById('deletePrompt').addEventListener('click', () => {
+document.getElementById('deletePrompt').addEventListener('click', async () => {
   if (!viewingId || !confirm('delete this prompt?')) return;
-  prompts = prompts.filter(p => p.id !== viewingId);
-  save();
-  render();
-  closeView();
+  try {
+    await promptsCol.doc(viewingId).delete();
+    closeView();
+  } catch (err) {
+    console.error('delete failed:', err);
+  }
 });
 
 document.getElementById('copyPrompt').addEventListener('click', () => {
@@ -297,7 +303,7 @@ document.getElementById('copyPrompt').addEventListener('click', () => {
 const CUEY_GRADIENTS = {
   all:          ['#FFBB55', '#FF5E82'],
   writing:      ['#e8a090', '#7a8c42'],
-  coding:       ['#7898d0', '#e898b0'],
+  coding:       ['#e898b0', '#7898d0'],
   marketing:    ['#c8b0e4', '#e8d040'],
   research:     ['#7080d0', '#60a0b0'],
   design:       ['#98b8e4', '#e08878'],
@@ -460,5 +466,3 @@ document.addEventListener('mousemove', (e) => {
   }
   requestAnimationFrame(animatePupils);
 })();
-
-render();
