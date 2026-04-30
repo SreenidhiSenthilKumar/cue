@@ -1,5 +1,6 @@
-const USER_KEY  = 'cue_user_id';
-const THEME_KEY = 'cue_theme';
+const USER_KEY    = 'cue_user_id';
+const THEME_KEY   = 'cue_theme';
+const STORAGE_KEY = 'cue_prompts';
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -26,9 +27,6 @@ function getOrCreateUserId() {
 }
 const currentUserId = getOrCreateUserId();
 
-const db          = firebase.firestore();
-const promptsCol  = db.collection('prompts');
-
 let prompts         = [];
 let activeCategory  = 'all';
 let activeSortOrder = 'newest';
@@ -36,12 +34,24 @@ let activeSearch    = '';
 let viewingId = null;
 let editingId = null;
 
-promptsCol.onSnapshot(snapshot => {
-  prompts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+let promptsCol = null;
+
+if (FIREBASE_CONFIGURED) {
+  const db = firebase.firestore();
+  promptsCol = db.collection('prompts');
+  promptsCol.onSnapshot(snapshot => {
+    prompts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    render();
+  }, err => console.error('Firestore error:', err));
+} else {
+  try { prompts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { prompts = []; }
   render();
-}, err => {
-  console.error('Firestore error:', err);
-});
+}
+
+function localSave() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prompts));
+}
 
 function slugPlatform(p) { return 'plat-' + p.toLowerCase().replace(/[^a-z]/g, ''); }
 function catClass(cat)    { return 'cat-' + cat; }
@@ -263,10 +273,21 @@ document.getElementById('addForm').addEventListener('submit', async e => {
   };
 
   try {
-    if (editingId) {
-      await promptsCol.doc(editingId).update(fields);
+    if (FIREBASE_CONFIGURED) {
+      if (editingId) {
+        await promptsCol.doc(editingId).update(fields);
+      } else {
+        await promptsCol.add({ ...fields, createdAt: Date.now(), authorId: currentUserId });
+      }
     } else {
-      await promptsCol.add({ ...fields, createdAt: Date.now(), authorId: currentUserId });
+      if (editingId) {
+        const idx = prompts.findIndex(p => p.id === editingId);
+        if (idx !== -1) prompts[idx] = { ...prompts[idx], ...fields };
+      } else {
+        prompts.unshift({ id: crypto.randomUUID(), ...fields, createdAt: Date.now(), authorId: currentUserId });
+      }
+      localSave();
+      render();
     }
     closeAdd();
   } catch (err) {
@@ -282,7 +303,13 @@ document.getElementById('editPrompt').addEventListener('click', () => {
 document.getElementById('deletePrompt').addEventListener('click', async () => {
   if (!viewingId || !confirm('delete this prompt?')) return;
   try {
-    await promptsCol.doc(viewingId).delete();
+    if (FIREBASE_CONFIGURED) {
+      await promptsCol.doc(viewingId).delete();
+    } else {
+      prompts = prompts.filter(p => p.id !== viewingId);
+      localSave();
+      render();
+    }
     closeView();
   } catch (err) {
     console.error('delete failed:', err);
