@@ -123,33 +123,45 @@
           </div>
           <div class="form-row-2">
             <div class="form-row">
-              <label for="f-category">category <span class="req">*</span></label>
-              <select id="f-category" required>
-                <option value="" disabled selected>pick a category</option>
-                <option value="writing">writing</option>
-                <option value="coding">coding</option>
-                <option value="marketing">marketing</option>
-                <option value="research">research</option>
-                <option value="design">design</option>
-                <option value="productivity">productivity</option>
-                <option value="education">education</option>
-                <option value="other">other</option>
-              </select>
+              <label for="f-category-trigger">category <span class="req">*</span></label>
+              <div class="form-select" id="f-category-wrap">
+                <button type="button" class="form-select-trigger" id="f-category-trigger">
+                  <span id="f-category-label" class="placeholder">pick a category</span>
+                  <svg class="custom-select-arrow" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="custom-select-menu form-select-menu" id="f-category-menu" hidden>
+                  <button type="button" class="custom-select-opt" data-value="writing">writing</button>
+                  <button type="button" class="custom-select-opt" data-value="coding">coding</button>
+                  <button type="button" class="custom-select-opt" data-value="marketing">marketing</button>
+                  <button type="button" class="custom-select-opt" data-value="research">research</button>
+                  <button type="button" class="custom-select-opt" data-value="design">design</button>
+                  <button type="button" class="custom-select-opt" data-value="productivity">productivity</button>
+                  <button type="button" class="custom-select-opt" data-value="education">education</button>
+                  <button type="button" class="custom-select-opt" data-value="other">other</button>
+                </div>
+                <input type="hidden" id="f-category" name="f-category" />
+              </div>
             </div>
             <div class="form-row">
-              <label for="f-platform">ai platform <span class="req">*</span></label>
-              <select id="f-platform" required>
-                <option value="" disabled selected>pick a platform</option>
-                <option value="Claude">Claude</option>
-                <option value="ChatGPT">ChatGPT</option>
-                <option value="Gemini">Gemini</option>
-                <option value="Grok">Grok</option>
-                <option value="Perplexity">Perplexity</option>
-                <option value="Mistral">Mistral</option>
-                <option value="LLaMA">LLaMA</option>
-                <option value="Copilot">Copilot</option>
-                <option value="Other">Other</option>
-              </select>
+              <label for="f-platform-trigger">ai platform <span class="req">*</span></label>
+              <div class="form-select" id="f-platform-wrap">
+                <button type="button" class="form-select-trigger" id="f-platform-trigger">
+                  <span id="f-platform-label" class="placeholder">pick a platform</span>
+                  <svg class="custom-select-arrow" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="custom-select-menu form-select-menu" id="f-platform-menu" hidden>
+                  <button type="button" class="custom-select-opt" data-value="Claude">claude</button>
+                  <button type="button" class="custom-select-opt" data-value="ChatGPT">chatgpt</button>
+                  <button type="button" class="custom-select-opt" data-value="Gemini">gemini</button>
+                  <button type="button" class="custom-select-opt" data-value="Grok">grok</button>
+                  <button type="button" class="custom-select-opt" data-value="Perplexity">perplexity</button>
+                  <button type="button" class="custom-select-opt" data-value="Mistral">mistral</button>
+                  <button type="button" class="custom-select-opt" data-value="LLaMA">llama</button>
+                  <button type="button" class="custom-select-opt" data-value="Copilot">copilot</button>
+                  <button type="button" class="custom-select-opt" data-value="Other">other</button>
+                </div>
+                <input type="hidden" id="f-platform" name="f-platform" />
+              </div>
             </div>
           </div>
           <div class="form-row-2">

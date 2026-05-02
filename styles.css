@@ -163,11 +163,11 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s;
   line-height: 1;
   flex-shrink: 0;
 }
-.btn-theme:hover { opacity: 0.88; transform: scale(1.08); }
+.btn-theme:hover  { animation: blob-hover 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.btn-theme:active { animation: blob-click 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 .btn-theme svg { display: block; }
 .btn-theme.spinning svg { animation: theme-spin 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
@@ -253,7 +253,7 @@ header {
   padding: 0.55em 1.2em;
   background: transparent;
   color: var(--text);
-  border: 1px solid var(--border-md);
+  border: 1px solid var(--text);
   border-radius: var(--radius-pill);
   font-size: 15px;
   font-family: var(--font-display);
@@ -261,15 +261,16 @@ header {
   text-transform: capitalize;
   letter-spacing: 0.03em;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.btn-ghost:hover { border-color: var(--border-md); color: var(--text); }
+.btn-ghost:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-ghost:active { transform: scale(0.88); }
 
 .btn-ghost-sm {
   padding: 5px 12px;
   background: transparent;
   color: var(--text);
-  border: 1px solid var(--border-md);
+  border: 1px solid var(--text);
   border-radius: var(--radius-pill);
   font-size: 15px;
   font-family: var(--font-display);
@@ -277,12 +278,13 @@ header {
   text-transform: capitalize;
   letter-spacing: 0.03em;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.btn-ghost-sm:hover { border-color: var(--border-md); color: var(--text); }
-.btn-ghost-sm.btn-danger { color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
-.btn-ghost-sm.btn-danger:hover { border-color: #f87171; }
-.btn-ghost-sm.copied { color: var(--text); border-color: var(--border-md); }
+.btn-ghost-sm:hover { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-ghost-sm:active { transform: scale(0.88); }
+.btn-ghost-sm.btn-danger { color: #f87171; border-color: rgba(248, 113, 113, 0.3); background: transparent; }
+.btn-ghost-sm.btn-danger:hover { background: #f87171; color: #fff; border-color: #f87171; }
+.btn-ghost-sm.copied { color: var(--text); border-color: var(--text); }
 
 .filter-inner {
   display: flex;
@@ -340,7 +342,7 @@ header {
   letter-spacing: 0.05em;
   font-family: var(--font-display);
 }
-a
+
 .sort-controls {
   display: flex;
   align-items: center;
@@ -353,6 +355,36 @@ a
 }
 
 .custom-select { position: relative; }
+
+.form-select { position: relative; }
+
+.form-select-trigger {
+  width: 100%;
+  padding: 7px 14px 7px 18px;
+  background-color: rgba(0,0,0,0.12);
+  border: none;
+  border-radius: var(--radius-pill);
+  color: #111110;
+  font-size: 15px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.form-select-trigger.open .custom-select-arrow { transform: rotate(180deg); }
+.form-select-trigger span.placeholder { color: rgba(0,0,0,0.45); }
+
+.form-select-menu {
+  position: fixed !important;
+  top: 0; left: 0; right: auto;
+  min-width: 0;
+  z-index: 10020;
+  border: 1px solid rgba(0,0,0,0.7);
+}
 
 .custom-select-trigger {
   padding: 7px 14px 7px 18px;
@@ -527,6 +559,8 @@ main {
   font-family: var(--font-display);
 }
 
+.card .token-badge { display: none; }
+
 .token-badge {
   font-size: 15px;
   color: #111110;
@@ -623,8 +657,10 @@ main {
 .modal[class*="accent-"] .view-title-wrap h2 { color: #111110; }
 .modal[class*="accent-"] .modal-close { color: #111110; }
 .modal[class*="accent-"] .btn-ghost-sm { color: #111110; border: 1px solid rgba(0,0,0,0.7); background: transparent; }
-.modal[class*="accent-"] .btn-ghost-sm:hover { color: #111110; border-color: rgba(0,0,0,1); }
-.modal[class*="accent-"] .btn-ghost-sm.btn-danger { color: #c0392b; border-color: rgba(192,57,43,0.7); }
+.modal[class*="accent-"] .btn-ghost-sm:hover { background: #111110; color: #ffffff; border-color: #111110; }
+.modal[class*="accent-"] .btn-ghost-sm:active { transform: scale(0.88); }
+.modal[class*="accent-"] .btn-ghost-sm.btn-danger { color: #c0392b; border-color: rgba(192,57,43,0.7); background: transparent; }
+.modal[class*="accent-"] .btn-ghost-sm.btn-danger:hover { background: #c0392b; color: #fff; border-color: #c0392b; }
 .modal[class*="accent-"] .meta-pill { background: transparent; border: 1px solid rgba(0,0,0,0.7); color: #111110; }
 .modal[class*="accent-"] { border: none; }
 .modal[class*="accent-"] .view-prompt-box { background: transparent; border: none; color: #111110; }
@@ -703,29 +739,26 @@ label {
 
 input[type="text"],
 input[type="number"],
-select,
 textarea {
   width: 100%;
   padding: 9px 12px;
   border: 1px solid var(--border-md);
   border-radius: var(--radius-sm);
-  background: var(--surface2);
+  background-color: var(--surface2);
   font-size: 15px;
   font-family: var(--font-body);
   color: var(--text);
   outline: none;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, background-color 0.15s;
   resize: vertical;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus, textarea:focus {
   border-color: var(--border-md);
-  background: var(--surface);
+  background-color: var(--surface);
 }
 
 input::placeholder, textarea::placeholder { color: var(--muted); }
-select { cursor: pointer; }
-select option { background: var(--surface2); color: var(--text); }
 
 .form-error {
   font-size: 15px;
@@ -754,15 +787,13 @@ select option { background: var(--surface2); color: var(--text); }
 #addModal .req { color: #111110; }
 #addModal input[type="text"],
 #addModal input[type="number"],
-#addModal select,
 #addModal textarea {
-  background: transparent;
+  background-color: transparent;
   border: 1px solid rgba(0,0,0,0.7);
   color: #111110;
 }
 #addModal input::placeholder,
 #addModal textarea::placeholder { color: rgba(0,0,0,0.45); text-transform: capitalize; }
-#addModal select option { background: #EE7A7E; color: #111110; }
 #addModal .form-error { color: #7a1a1a; }
 #addModal .btn-ghost { color: #111110; border-color: rgba(0,0,0,0.7); }
 #addModal .btn-pill { background: #111110; color: #EE7A7E; }
@@ -1138,7 +1169,7 @@ select option { background: var(--surface2); color: var(--text); }
 #cuey-bubble {
   position: fixed;
   bottom: 215px;
-  right: 24px;
+  right: 44px;
   width: 280px;
   z-index: 9999;
   background: #EE7A7E;
@@ -1194,7 +1225,7 @@ select option { background: var(--surface2); color: var(--text); }
 #cuey-click-bubble {
   position: fixed;
   bottom: 215px;
-  right: 24px;
+  right: 44px;
   width: 280px;
   height: 54px;
   z-index: 9999;

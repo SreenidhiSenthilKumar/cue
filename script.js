@@ -192,9 +192,56 @@ function closeView() {
   viewingId = null;
 }
 
+const FORM_SELECT_PLACEHOLDERS = { 'f-category': 'pick a category', 'f-platform': 'pick a platform' };
+
+function setFormSelect(fieldId, value) {
+  document.getElementById(fieldId).value = value;
+  const labelEl = document.getElementById(fieldId + '-label');
+  if (labelEl) {
+    labelEl.textContent = value || FORM_SELECT_PLACEHOLDERS[fieldId];
+    labelEl.classList.toggle('placeholder', !value);
+  }
+  const menu = document.getElementById(fieldId + '-menu');
+  if (menu) menu.querySelectorAll('.custom-select-opt').forEach(o => o.classList.toggle('active', o.dataset.value === value));
+}
+
+function setupFormSelect(triggerId, menuId, fieldId) {
+  const trigger = document.getElementById(triggerId);
+  const menu    = document.getElementById(menuId);
+
+  function positionMenu() {
+    const r = trigger.getBoundingClientRect();
+    menu.style.top      = (r.bottom + 6) + 'px';
+    menu.style.left     = r.left + 'px';
+    menu.style.width    = r.width + 'px';
+  }
+
+  trigger.addEventListener('click', e => {
+    e.stopPropagation();
+    const opening = menu.hidden;
+    document.querySelectorAll('.form-select-menu').forEach(m => { m.hidden = true; });
+    document.querySelectorAll('.form-select-trigger').forEach(t => t.classList.remove('open'));
+    if (opening) {
+      positionMenu();
+      menu.hidden = false;
+      trigger.classList.add('open');
+    }
+  });
+
+  menu.addEventListener('click', e => {
+    const opt = e.target.closest('.custom-select-opt');
+    if (!opt) return;
+    setFormSelect(fieldId, opt.dataset.value);
+    menu.hidden = true;
+    trigger.classList.remove('open');
+  });
+}
+
 function openAdd() {
   editingId = null;
   document.getElementById('addForm').reset();
+  setFormSelect('f-category', '');
+  setFormSelect('f-platform', '');
   document.getElementById('formError').textContent = '';
   document.querySelector('#addModal .modal-header h2').textContent = 'add a prompt';
   document.querySelector('#addModal .form-actions .btn-pill').textContent = 'save prompt';
@@ -211,8 +258,8 @@ function openEdit(id) {
 
   document.getElementById('f-title').value       = p.title;
   document.getElementById('f-prompt').value      = p.prompt;
-  document.getElementById('f-category').value    = p.category;
-  document.getElementById('f-platform').value    = p.platform;
+  setFormSelect('f-category', p.category);
+  setFormSelect('f-platform', p.platform);
   document.getElementById('f-model').value       = p.model || '';
   document.getElementById('f-tokens').value      = p.tokens != null ? p.tokens : '';
   document.getElementById('f-temperature').value = p.temperature != null ? p.temperature : '';
@@ -406,6 +453,8 @@ sortMenu.addEventListener('click', e => {
 document.addEventListener('click', () => {
   sortMenu.hidden = true;
   sortTrigger.classList.remove('open');
+  document.querySelectorAll('.form-select-menu').forEach(m => { m.hidden = true; });
+  document.querySelectorAll('.form-select-trigger').forEach(t => t.classList.remove('open'));
 });
 
 const searchInput = document.getElementById('searchInput');
@@ -444,6 +493,9 @@ function cyclePlaceholder() {
 
 typePlaceholder(searchPlaceholders[0]);
 setInterval(cyclePlaceholder, 3200);
+
+setupFormSelect('f-category-trigger', 'f-category-menu', 'f-category');
+setupFormSelect('f-platform-trigger', 'f-platform-menu', 'f-platform');
 
 document.getElementById('openAddModal').addEventListener('click', openAdd);
 document.getElementById('openAddModalEmpty').addEventListener('click', openAdd);
