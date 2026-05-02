@@ -81,8 +81,6 @@ function filtered() {
     list = list.filter(p =>
       p.title.toLowerCase().includes(q) ||
       p.prompt.toLowerCase().includes(q) ||
-      (p.notes || '').toLowerCase().includes(q) ||
-      (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
       p.platform.toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q)
     );
@@ -116,9 +114,7 @@ function render() {
   empty.classList.add('hidden');
 
   grid.innerHTML = list.map(p => {
-    const tags = (p.tags || []).slice(0, 3)
-      .map(t => `<span class="tag">${escHtml(t)}</span>`).join('');
-
+  
     const tokenBadge = p.tokens
       ? `<span class="token-badge">
            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -135,11 +131,10 @@ function render() {
         <div class="card-body">
           <div class="card-top">
             <span class="card-title">${escHtml(p.title)}</span>
-            <span class="cat-badge ${catClass(p.category)}">${p.category}</span>
           </div>
           <p class="card-snippet">${escHtml(p.prompt)}</p>
-          ${tags ? `<div class="card-tags">${tags}</div>` : ''}
           <div class="card-footer">
+            <span class="cat-badge ${catClass(p.category)}">${p.category}</span>
             <span class="platform-badge ${slugPlatform(p.platform)}">${escHtml(p.platform)}</span>
             ${tokenBadge}
           </div>
@@ -164,10 +159,11 @@ function openView(id) {
   document.getElementById('v-title').textContent = p.title;
 
   const catBadge = document.getElementById('v-cat');
-  catBadge.textContent = p.category;
-  catBadge.className = `view-cat-badge cat-badge ${catClass(p.category)}`;
+  catBadge.textContent = '';
+  catBadge.className = '';
 
   document.getElementById('v-meta').innerHTML = [
+    `<span class="cat-badge ${catClass(p.category)}">${p.category}</span>`,
     `<span class="meta-pill platform ${slugPlatform(p.platform)}">${escHtml(p.platform)}</span>`,
     p.model       ? `<span class="meta-pill">${escHtml(p.model)}</span>` : '',
     p.tokens      ? `<span class="meta-pill tokens">${Number(p.tokens).toLocaleString()} tokens</span>` : '',
@@ -177,13 +173,6 @@ function openView(id) {
   ].join('');
 
   document.getElementById('v-prompt').textContent = p.prompt;
-
-  const notesSection = document.getElementById('v-notes-section');
-  document.getElementById('v-notes').textContent = p.notes || '';
-  notesSection.style.display = p.notes ? '' : 'none';
-
-  document.getElementById('v-tags').innerHTML =
-    (p.tags || []).map(t => `<span class="tag">${escHtml(t)}</span>`).join('');
 
   const copyBtn = document.getElementById('copyPrompt');
   copyBtn.textContent = 'copy prompt';
@@ -228,8 +217,6 @@ function openEdit(id) {
   document.getElementById('f-tokens').value      = p.tokens != null ? p.tokens : '';
   document.getElementById('f-temperature').value = p.temperature != null ? p.temperature : '';
   document.getElementById('f-mode').value        = p.mode || '';
-  document.getElementById('f-notes').value       = p.notes || '';
-  document.getElementById('f-tags').value        = (p.tags || []).join(', ');
   document.getElementById('formError').textContent = '';
   document.querySelector('#addModal .modal-header h2').textContent = 'edit prompt';
   document.querySelector('#addModal .form-actions .btn-pill').textContent = 'update prompt';
@@ -260,16 +247,12 @@ document.getElementById('addForm').addEventListener('submit', async e => {
 
   const tokensVal = document.getElementById('f-tokens').value;
   const tempVal   = document.getElementById('f-temperature').value;
-  const rawTags   = document.getElementById('f-tags').value;
-
   const fields = {
     title, prompt, category, platform,
     model:       document.getElementById('f-model').value.trim(),
     tokens:      tokensVal ? Number(tokensVal) : null,
     temperature: tempVal !== '' ? tempVal : null,
     mode:        document.getElementById('f-mode').value.trim(),
-    notes:       document.getElementById('f-notes').value.trim(),
-    tags:        rawTags.split(',').map(t => t.trim()).filter(Boolean),
   };
 
   try {
@@ -362,6 +345,16 @@ function dismissBubble(e) {
 document.getElementById('cuey-bubble').addEventListener('click', dismissBubble);
 document.querySelector('.bubble-dismiss').addEventListener('click', dismissBubble);
 
+const CLICK_MESSAGES = [
+  'Hope you found the prompt you wanted!',
+  'Happy prompting ✦',
+  'You\'re on a roll today!',
+  'Save your best ones for later!',
+  'Need a prompt? I got you ✦',
+];
+
+let clickBubbleTimer = null;
+
 document.getElementById('cuey-corner').addEventListener('click', () => {
   const svg = document.getElementById('corner-cuey');
   setTimeout(() => {
@@ -370,6 +363,12 @@ document.getElementById('cuey-corner').addEventListener('click', () => {
     svg.classList.add('spinning');
     svg.addEventListener('animationend', () => svg.classList.remove('spinning'), { once: true });
   }, 300);
+
+  const bubble = document.getElementById('cuey-click-bubble');
+  bubble.textContent = CLICK_MESSAGES[Math.floor(Math.random() * CLICK_MESSAGES.length)];
+  bubble.classList.add('visible');
+  clearTimeout(clickBubbleTimer);
+  clickBubbleTimer = setTimeout(() => bubble.classList.remove('visible'), 2800);
 });
 
 document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -382,15 +381,69 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
   });
 });
 
-document.getElementById('sortSelect').addEventListener('change', e => {
-  activeSortOrder = e.target.value;
+const sortTrigger = document.getElementById('sortTrigger');
+const sortMenu    = document.getElementById('sortMenu');
+
+sortTrigger.addEventListener('click', e => {
+  e.stopPropagation();
+  const open = !sortMenu.hidden;
+  sortMenu.hidden = open;
+  sortTrigger.classList.toggle('open', !open);
+});
+
+sortMenu.addEventListener('click', e => {
+  const opt = e.target.closest('.custom-select-opt');
+  if (!opt) return;
+  activeSortOrder = opt.dataset.value;
+  document.getElementById('sortLabel').textContent = opt.textContent;
+  sortMenu.querySelectorAll('.custom-select-opt').forEach(o => o.classList.remove('active'));
+  opt.classList.add('active');
+  sortMenu.hidden = true;
+  sortTrigger.classList.remove('open');
   render();
 });
 
-document.getElementById('searchInput').addEventListener('input', e => {
+document.addEventListener('click', () => {
+  sortMenu.hidden = true;
+  sortTrigger.classList.remove('open');
+});
+
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', e => {
   activeSearch = e.target.value;
   render();
 });
+
+const searchPlaceholders = [
+  "search prompts!",
+  "search for 'coding help'…",
+  "search for 'marketing genius'…",
+  "search for 'writing assistant'…",
+  "search for 'research deep dive'…",
+  "search for 'design ideas'…",
+  "search for 'productivity boost'…",
+  "search for 'email drafter'…",
+];
+let _phIdx = 0;
+let _phTyping = null;
+
+function typePlaceholder(text) {
+  clearInterval(_phTyping);
+  searchInput.placeholder = '';
+  let i = 0;
+  _phTyping = setInterval(() => {
+    searchInput.placeholder = text.slice(0, ++i);
+    if (i >= text.length) clearInterval(_phTyping);
+  }, 45);
+}
+
+function cyclePlaceholder() {
+  _phIdx = (_phIdx + 1) % searchPlaceholders.length;
+  typePlaceholder(searchPlaceholders[_phIdx]);
+}
+
+typePlaceholder(searchPlaceholders[0]);
+setInterval(cyclePlaceholder, 3200);
 
 document.getElementById('openAddModal').addEventListener('click', openAdd);
 document.getElementById('openAddModalEmpty').addEventListener('click', openAdd);
@@ -493,3 +546,33 @@ document.addEventListener('mousemove', (e) => {
   }
   requestAnimationFrame(animatePupils);
 })();
+
+let _hoveredCard = null;
+
+document.getElementById('promptGrid').addEventListener('mousemove', e => {
+  const card = e.target.closest('.card');
+  if (_hoveredCard && _hoveredCard !== card) {
+    _hoveredCard.style.backgroundPosition = '50% 50%';
+  }
+  _hoveredCard = card;
+  if (!card) return;
+  const rect = card.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1);
+  const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1);
+  card.style.backgroundPosition = `${x}% ${y}%`;
+  card.style.setProperty('--mouse-x', x + '%');
+  card.style.setProperty('--mouse-y', y + '%');
+});
+
+document.getElementById('promptGrid').addEventListener('mouseleave', () => {
+  document.querySelectorAll('.card').forEach(c => c.style.backgroundPosition = '50% 50%');
+  _hoveredCard = null;
+});
+
+const _cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', e => {
+  _cursor.style.left = e.clientX + 'px';
+  _cursor.style.top  = e.clientY + 'px';
+});
+document.addEventListener('mousedown', () => _cursor.classList.add('clicking'));
+document.addEventListener('mouseup',   () => _cursor.classList.remove('clicking'));

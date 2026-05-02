@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cue</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&family=Syne:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -55,16 +52,26 @@
         <button class="filter-chip" data-cat="other">other</button>
       </div>
       <nav class="header-nav">
-        <div class="search-wrap">
-          <input type="text" id="searchInput" placeholder="search prompts…" autocomplete="off" />
-          <button class="btn-add-mobile" id="openAddModalMobile" aria-label="add prompt">+</button>
-        </div>
         <button class="btn-theme" id="toggleTheme" aria-label="toggle theme">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M20 15.3099L23.31 11.9999L20 8.68994V3.99994H15.31L12 0.689941L8.69 3.99994H4V8.68994L0.690002 11.9999L4 15.3099V19.9999H8.69L12 23.3099L15.31 19.9999H20V15.3099ZM12 17.9999V5.99994C15.31 5.99994 18 8.68994 18 11.9999C18 15.3099 15.31 17.9999 12 17.9999Z" fill="currentColor"/>
           </svg>
         </button>
-        <button class="btn-pill" id="openAddModal">+ add prompt</button>
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="search prompts…" autocomplete="off" />
+          <button class="btn-add-mobile btn-blob" id="openAddModalMobile" aria-label="add prompt">
+            <svg class="btn-blob-shape" viewBox="0 0 477.62 445.78" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M229.32,83.05c1.26-37.89,22.73-69.87,52.93-79.8,30.2-9.94,58.11,5.81,64.3,9.3,6.74,3.8,30.83,17.39,39.51,45.71,8.53,27.84-1.06,59.43-23.81,82.12,4.93-2.15,34.93-14.63,67.07,0,36.17,16.46,45.36,56.39,46.13,60.03,1.22,5.77,8.81,41.77-14.12,68.51-21.9,25.53-63.11,32.7-100.3,15.36,4.36,1.96,33.99,15.92,43.56,49.75,11.2,39.6-15.28,70.42-17.95,73.42-18.91,21.26-48.98,32.08-78.68,25.1-28.52-6.7-51.22-28.52-59.12-56.81-.84,4.3-9.42,44.67-47.92,62.49-32.15,14.89-69.37,6.74-93.43-15.2-3.1-2.83-35.78-33.67-26.88-76.69,6.78-32.77,32.88-49.34,37.74-52.31-21.56,17.64-50.02,22.83-73.92,12.89-33.07-13.75-40.39-49.4-42.38-59.1C.03,238.03-6.17,199.48,21.18,171.34c22.19-22.83,57.68-29.74,89.84-17.57-25.63-14.77-41.16-41.27-39.49-68.42,2.03-33.01,28.55-51.69,34.61-55.97,7.15-5.04,34.48-22.6,67.07-13.41,29.51,8.31,51.61,34.76,56.1,67.07Z" fill="currentColor"/>
+            </svg>
+            <span class="btn-blob-plus">+</span>
+          </button>
+        </div>
+        <button class="btn-blob" id="openAddModal" aria-label="add prompt">
+          <svg class="btn-blob-shape" viewBox="0 0 477.62 445.78" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M229.32,83.05c1.26-37.89,22.73-69.87,52.93-79.8,30.2-9.94,58.11,5.81,64.3,9.3,6.74,3.8,30.83,17.39,39.51,45.71,8.53,27.84-1.06,59.43-23.81,82.12,4.93-2.15,34.93-14.63,67.07,0,36.17,16.46,45.36,56.39,46.13,60.03,1.22,5.77,8.81,41.77-14.12,68.51-21.9,25.53-63.11,32.7-100.3,15.36,4.36,1.96,33.99,15.92,43.56,49.75,11.2,39.6-15.28,70.42-17.95,73.42-18.91,21.26-48.98,32.08-78.68,25.1-28.52-6.7-51.22-28.52-59.12-56.81-.84,4.3-9.42,44.67-47.92,62.49-32.15,14.89-69.37,6.74-93.43-15.2-3.1-2.83-35.78-33.67-26.88-76.69,6.78-32.77,32.88-49.34,37.74-52.31-21.56,17.64-50.02,22.83-73.92,12.89-33.07-13.75-40.39-49.4-42.38-59.1C.03,238.03-6.17,199.48,21.18,171.34c22.19-22.83,57.68-29.74,89.84-17.57-25.63-14.77-41.16-41.27-39.49-68.42,2.03-33.01,28.55-51.69,34.61-55.97,7.15-5.04,34.48-22.6,67.07-13.41,29.51,8.31,51.61,34.76,56.1,67.07Z" fill="currentColor"/>
+          </svg>
+          <span class="btn-blob-plus">+</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -73,13 +80,19 @@
     <div class="sort-inner">
       <span class="results-count" id="resultsCount">0 prompts</span>
       <div class="sort-controls">
-        <select id="sortSelect">
-          <option value="newest">newest</option>
-          <option value="oldest">oldest</option>
-          <option value="tokens-high">most tokens</option>
-          <option value="tokens-low">fewest tokens</option>
-          <option value="platform">platform</option>
-        </select>
+        <div class="custom-select" id="sortDropdown">
+          <button class="custom-select-trigger" id="sortTrigger">
+            <span id="sortLabel">newest</span>
+            <svg class="custom-select-arrow" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="custom-select-menu" id="sortMenu" hidden>
+            <button class="custom-select-opt active" data-value="newest">newest</button>
+            <button class="custom-select-opt" data-value="oldest">oldest</button>
+            <button class="custom-select-opt" data-value="tokens-high">most tokens</button>
+            <button class="custom-select-opt" data-value="tokens-low">fewest tokens</button>
+            <button class="custom-select-opt" data-value="platform">platform</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -159,14 +172,6 @@
               <input type="text" id="f-mode" placeholder="e.g. system prompt, API, chat" />
             </div>
           </div>
-          <div class="form-row">
-            <label for="f-notes">notes</label>
-            <textarea id="f-notes" rows="2" placeholder="what worked, what to watch out for…"></textarea>
-          </div>
-          <div class="form-row">
-            <label for="f-tags">tags <span class="hint">(comma separated)</span></label>
-            <input type="text" id="f-tags" placeholder="e.g. reusable, long-form, json-output" />
-          </div>
           <div class="form-error" id="formError"></div>
           <div class="form-actions">
             <button type="button" class="btn-ghost" id="cancelAdd">cancel</button>
@@ -192,22 +197,19 @@
         </div>
       </div>
       <div class="modal-body">
-        <div class="view-meta" id="v-meta"></div>
         <div class="view-prompt-box" id="v-prompt"></div>
-        <div class="view-section" id="v-notes-section">
-          <label>notes</label>
-          <p id="v-notes"></p>
-        </div>
-        <div class="view-tags" id="v-tags"></div>
+        <div class="view-meta" id="v-meta"></div>
       </div>
     </div>
   </div>
 
   <div id="cuey-bubble">
-    hey! i'm cuey ✦<br>
-    cue is your personal ai prompt library, save, tag &amp; search your best prompts.
+    Hey! I'm Cuey ✦<br>
+    Cue is your personal AI prompt library, save &amp; search your best prompts.
     <button class="bubble-dismiss" aria-label="dismiss">✕</button>
   </div>
+
+  <div id="cuey-click-bubble"></div>
 
   <div id="cuey-corner">
     <svg id="corner-cuey" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -229,6 +231,8 @@
       <circle cx="118" cy="101" r="12" fill="#111" class="cuey-pupil"/>
     </svg>
   </div>
+
+  <div id="custom-cursor" aria-hidden="true"></div>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
